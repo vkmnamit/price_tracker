@@ -14,6 +14,8 @@ class NykaaSpider(Spider):
         "https://www.nykaafashion.com/men/c/10000",
         "https://www.nykaafashion.com/electronics/c/10549",
         "https://www.nykaafashion.com/jewelry/c/11187",
+        "https://www.nykaafashion.com/health-beauty/c/10549",
+        "https://www.nykaafashion.com/health-beauty/c/10549",
     ]
 
     def parse(self, response):

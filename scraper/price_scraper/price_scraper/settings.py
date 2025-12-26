@@ -15,11 +15,11 @@ NEWSPIDER_MODULE = "price_scraper.spiders"
 ADDONS = {}
 
 
-# Obey robots.txt rules
-ROBOTSTXT_OBEY = False
-
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
-USER_AGENT = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36"
+#USER_AGENT = "price_scraper (+http://www.yourdomain.com)"
+
+# Obey robots.txt rules
+ROBOTSTXT_OBEY = True
 
 # Concurrency and throttling settings
 #CONCURRENT_REQUESTS = 16
@@ -33,18 +33,10 @@ DOWNLOAD_DELAY = 1
 #TELNETCONSOLE_ENABLED = False
 
 # Override the default request headers:
-DEFAULT_REQUEST_HEADERS = {
-   "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7",
-   "Accept-Language": "en-US,en;q=0.9",
-   "Accept-Encoding": "gzip, deflate, br",
-   "Connection": "keep-alive",
-   "Upgrade-Insecure-Requests": "1",
-   "Sec-Fetch-Dest": "document",
-   "Sec-Fetch-Mode": "navigate",
-   "Sec-Fetch-Site": "none",
-   "Sec-Fetch-User": "?1",
-   "Cache-Control": "max-age=0",
-}
+#DEFAULT_REQUEST_HEADERS = {
+#    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+#    "Accept-Language": "en",
+#}
 
 # Enable or disable spider middlewares
 # See https://docs.scrapy.org/en/latest/topics/spider-middleware.html
@@ -101,3 +93,4 @@ MONGO_DATABASE = 'price_tracker'
 REQUEST_FINGERPRINTER_IMPLEMENTATION = "2.7"
 TWISTED_REACTOR = "twisted.internet.asyncioreactor.AsyncioSelectorReactor"
 FEED_EXPORT_ENCODING = "utf-8"
+LOG_LEVEL = 'INFO'

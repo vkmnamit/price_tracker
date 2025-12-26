@@ -5,6 +5,8 @@ from pydantic import BaseModel
 from typing import List, Optional, Union
 import re
 import random
+import subprocess
+import os
 from datetime import datetime
 
 app = FastAPI()
@@ -92,6 +94,9 @@ def get_products(limit: int = 50):
         if not any(up.platform == p['platform'] for up in unified[group_key]['prices']):
             p['price_change'] = get_product_change(p['product_id'], p['price'])
             unified[group_key]['prices'].append(Product(**p))
+            
+        # Crucial: Always mark this product_id as seen to avoid duplicate IDs in different groups
+        seen_ids.add(p['product_id'])
 
     final_list = [UnifiedProduct(**u) for u in unified.values()]
     random.shuffle(final_list)
@@ -128,8 +133,33 @@ def search_products(q: str):
         if not any(up.platform == p['platform'] for up in unified[group_key]['prices']):
             p['price_change'] = get_product_change(p['product_id'], p['price'])
             unified[group_key]['prices'].append(Product(**p))
+            
+        seen_ids.add(p['product_id'])
 
     return [UnifiedProduct(**u) for u in unified.values()]
+    
+@app.get("/scrape/")
+def trigger_scrape(q: str):
+    # This runs the spiders in the background
+    # We use the absolute path to the scraper directory
+    scraper_cwd = "/Users/namitraj/price-tracker/scraper/price_scraper"
+    
+    # Run Flipkart and Amazon spiders
+    # We use -a query=... to pass the search query to the spiders
+    try:
+        # Run Flipkart
+        subprocess.Popen(
+            ["/Users/namitraj/price-tracker/venv/bin/scrapy", "crawl", "flipkart_spider", "-a", f"query={q}"],
+            cwd=scraper_cwd
+        )
+        # Run Amazon
+        subprocess.Popen(
+            ["/Users/namitraj/price-tracker/venv/bin/scrapy", "crawl", "amazon_spider", "-a", f"query={q}"],
+            cwd=scraper_cwd
+        )
+        return {"status": "scraping_started", "query": q}
+    except Exception as e:
+        return {"status": "error", "message": str(e)}
 
 @app.get("/deals/", response_model=List[UnifiedProduct])
 def get_hot_deals(limit: int = 10):
@@ -173,6 +203,8 @@ def get_hot_deals(limit: int = 10):
             
         if not any(up.platform == p['platform'] for up in unified[group_key]['prices']):
             unified[group_key]['prices'].append(Product(**p))
+            
+        seen_ids.add(p['product_id'])
 
     # Sort by the biggest drop
     final_deals = [UnifiedProduct(**u) for u in unified.values()]

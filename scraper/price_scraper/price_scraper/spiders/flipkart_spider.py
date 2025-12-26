@@ -7,25 +7,25 @@ from price_scraper.items import (
 class FlipkartSpider(Spider):
     name = "flipkart_spider"
     allowed_domains = ["flipkart.com"]
-    start_urls = [
-        "https://www.flipkart.com/search?q=smartwatches",
-        "https://www.flipkart.com/search?q=mens+watches",
-        "https://www.flipkart.com/search?q=womens+watches",
-        "https://www.flipkart.com/search?q=sneakers",
-        "https://www.flipkart.com/search?q=running+shoes",
-        "https://www.flipkart.com/search?q=monitors",
-        "https://www.flipkart.com/search?q=speakers",
-        "https://www.flipkart.com/search?q=tablets",
-        "https://www.flipkart.com/search?q=cameras",
-        "https://www.flipkart.com/search?q=smartphones",
-        "https://www.flipkart.com/search?q=smart+tv",   
-        "https://www.flipkart.com/search?q=smart+refrigerator",
-        "https://www.flipkart.com/search?q=smart+air+conditioner",
-        "https://www.flipkart.com/search?q=smart+washing+machine",
-        "https://www.flipkart.com/search?q=smart+refrigerator",
-        "https://www.flipkart.com/search?q=smart+refrigerator",
-        "https://www.flipkart.com/search?q=smart+refrigerator",
-    ]
+    def __init__(self, query=None, *args, **kwargs):
+        super(FlipkartSpider, self).__init__(*args, **kwargs)
+        if query:
+            self.start_urls = [f"https://www.flipkart.com/search?q={query}"]
+        else:
+            self.start_urls = [
+                "https://www.flipkart.com/search?q=smartwatches",
+                "https://www.flipkart.com/search?q=mens+watches",
+                "https://www.flipkart.com/search?q=womens+watches",
+                "https://www.flipkart.com/search?q=sneakers",
+                "https://www.flipkart.com/search?q=running+shoes",
+                "https://www.flipkart.com/search?q=monitors",
+                "https://www.flipkart.com/search?q=speakers",
+                "https://www.flipkart.com/search?q=tablets",
+                "https://www.flipkart.com/search?q=cameras",
+                "https://www.flipkart.com/search?q=smartphones",
+                "https://www.flipkart.com/search?q=smart+tv",   
+                "https://www.flipkart.com/search?q=smart+refrigerator",
+            ]
 
     def parse(self, response):
         # Follow search links
@@ -42,7 +42,9 @@ class FlipkartSpider(Spider):
                    response.css("div._1AtVbE") or \
                    response.css("a.k7wcnx") or \
                    response.css("div.cPHDOP") or \
-                   response.css("div._75_9Y")
+                   response.css("div._75_9Y") or \
+                   response.css("div.CGtC98") or \
+                   response.css("div._4dd8f5")
 
         self.logger.info(f"Found {len(products)} products on {response.url}")
 
@@ -54,13 +56,16 @@ class FlipkartSpider(Spider):
                    product.css("a.IRpwCQ::text").get() or \
                    product.css("a.s1Q9rs::text").get() or \
                    product.css("div._2Wk9S::text").get() or \
-                   product.css("div.Y_uN9p::text").get()
+                   product.css("div.Y_uN9p::text").get() or \
+                   product.css("div.w89uY_::text").get() or \
+                   product.css("div._3wU53n::text").get()
             
             # Image extraction with fallbacks for lazy loading
             image_url = product.css("img::attr(src)").get() or \
                         product.css("img::attr(data-src)").get() or \
-                        product.css("img._2puESu::attr(src)").get() or \
-                        product.css("img._396cs4::attr(src)").get()
+                        product.css("img._396cs4::attr(src)").get() or \
+                        product.css("img.V_P96w::attr(src)").get() or \
+                        product.css("img._2puESu::attr(src)").get()
 
             # Price fallbacks
             price = product.css("div._30jeq3::text").get() or \

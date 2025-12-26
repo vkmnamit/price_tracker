@@ -7,20 +7,25 @@ from price_scraper.items import (
 class MyntraSpider(Spider):
     name = "myntra_spider"
     allowed_domains = ["myntra.com"]
-    start_urls = [
-        "https://www.myntra.com/men-tshirts",
-        "https://www.myntra.com/women-tshirts",
-        "https://www.myntra.com/women-dresses",
-        "https://www.myntra.com/men-jeans",
-        "https://www.myntra.com/women-jeans",
-        "https://www.myntra.com/men-casual-shoes",
-        "https://www.myntra.com/women-casual-shoes",
-        "https://www.myntra.com/watches",
-        "https://www.myntra.com/headphones",
-        "https://www.myntra.com/men-ethnic-wear",
-        "https://www.myntra.com/women-ethnic-wear",
-        "https://www.myntra.com/handbags",
-    ]
+    def __init__(self, query=None, *args, **kwargs):
+        super(MyntraSpider, self).__init__(*args, **kwargs)
+        if query:
+            self.start_urls = [f"https://www.myntra.com/{query}"]
+        else:
+            self.start_urls = [
+                "https://www.myntra.com/men-tshirts",
+                "https://www.myntra.com/women-tshirts",
+                "https://www.myntra.com/women-dresses",
+                "https://www.myntra.com/men-jeans",
+                "https://www.myntra.com/women-jeans",
+                "https://www.myntra.com/men-casual-shoes",
+                "https://www.myntra.com/women-casual-shoes",
+                "https://www.myntra.com/watches",
+                "https://www.myntra.com/headphones",
+                "https://www.myntra.com/men-ethnic-wear",
+                "https://www.myntra.com/women-ethnic-wear",
+                "https://www.myntra.com/handbags",
+            ]
 
     def parse(self, response):
         # The logic in parse_category is correct for search/category pages
